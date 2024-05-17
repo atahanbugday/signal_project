@@ -9,13 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class fileOutputStrategy implements OutputStrategy {
 
-    private String BaseDirectory;
+    private String baseDirectory; // changed variable name to camelCase 
 
-    public final ConcurrentHashMap<String, String> file_map = new ConcurrentHashMap<>();
+    // changed variable name to UPPER_SNAKE_CASE since it is a constant
+    public final ConcurrentHashMap<String, String> FILE_MAP = new ConcurrentHashMap<>(); 
 
     public fileOutputStrategy(String baseDirectory) {
 
-        this.BaseDirectory = baseDirectory;
+        this.baseDirectory = baseDirectory; // changed name to camelCase
     }
 
     @Override
@@ -27,8 +28,8 @@ public class fileOutputStrategy implements OutputStrategy {
             System.err.println("Error creating base directory: " + e.getMessage());
             return;
         }
-        // Set the FilePath variable
-        String FilePath = file_map.computeIfAbsent(label, k -> Paths.get(BaseDirectory, label + ".txt").toString());
+        // changed variable name to UPPER_SNAKE_CASE since it is a constant
+        String FilePath = FILE_MAP.computeIfAbsent(label, k -> Paths.get(BaseDirectory, label + ".txt").toString());
 
         // Write the data to the file
         try (PrintWriter out = new PrintWriter(
