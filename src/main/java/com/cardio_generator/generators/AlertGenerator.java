@@ -4,14 +4,30 @@ import java.util.Random;
 
 import com.cardio_generator.outputs.OutputStrategy;
 
+/**
+ * This class implements PatientDataGenerator to generate alerts for patients
+ * Simulates alert conditions to monitor 
+ */
+
 public class AlertGenerator implements PatientDataGenerator {
 
     public static final Random randomGenerator = new Random();
     private boolean[] alertStates; // false = resolved, true = pressed //changed to camelCase
 
+
+/**Constructor method to initialize alert states for each patient. 
+ * @param patientCount  the number of the patients
+ */
     public AlertGenerator(int patientCount) {
         alertStates = new boolean[patientCount + 1]; //changed to camelCase
     }
+
+
+    /**
+     * Generates an alert (resolved or trigged) based on probability and current state.
+     * @param patientId Unique ID of a patient
+     * @param outputStrategy output strategy to output alert data
+     */
 
     @Override
     public void generate(int patientId, OutputStrategy outputStrategy) {
