@@ -33,6 +33,7 @@ public class AlertGenerator {
             throw new NullPointerException("Alert strategy cannot be null.");
         }
         this.alertProtocol = alertProtocol;
+        
     }
 
     /**
