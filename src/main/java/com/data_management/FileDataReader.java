@@ -8,16 +8,28 @@ import com.data_management.PatientRecord;
 
 public class FileDataReader implements DataReader{
     
-    //To-Do: Add explanation of the code
-    public void readData(String outputDirectory, DataStorage dataStorage)
+    /**This class implements DataReader
+      * reads data from files on a given directory 
+      * parse data and stores it in the data storage 
+      */
+
+	private String dirPath;
+	
+	public FileDataReader(String dirPath)
+	{
+		this.dirPath=dirPath;
+	}
+
+    public void readData(DataStorage dataStorage)
     {
-        File dir=new File(outputDirectory);
+	
+        File dir=new File(dirPath);
         if(!dir.exists() || !dir.isDirectory())
         {
             throw new IllegalArgumentException("Invalid argument!"+outputDirectory);
         }
 
-        File[] files = dir.listFiles((d,name)->name.endsWith(".txt"));
+        File[] files = dir.listFiles((d,name)->name.endsWith(".txt")); // workking w/text files
 
         if(files==null)
         {
