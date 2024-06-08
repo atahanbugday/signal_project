@@ -52,6 +52,13 @@ public class Patient {
      *         range
      */
     public List<PatientRecord> getRecords(long startTime, long endTime) {
-        // TODO Implement and test this method
+        return patientRecords.stream()
+                             .filter(record -> {
+                                 long timestamp = record.getTimestamp();
+                                 return timestamp >= startTime && timestamp <= endTime;
+                             })
+                             .sorted(Comparator.comparingLong(PatientRecord::getTimestamp))
+                             .collect(Collectors.toList());
     }
+    
 }
