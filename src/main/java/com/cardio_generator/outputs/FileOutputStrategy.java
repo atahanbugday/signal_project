@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class implements OutputStrategy for file output
  */
 
-public class fileOutputStrategy implements OutputStrategy {
+public class FileOutputStrategy implements OutputStrategy {
 
     private String baseDirectory; // changed variable name to camelCase 
 
@@ -24,7 +24,7 @@ public class fileOutputStrategy implements OutputStrategy {
  * it sets base directory for file output
  * @param baseDirectory the base directory path
  */
-    public fileOutputStrategy(String baseDirectory) {
+    public FileOutputStrategy(String baseDirectory) {
 
         this.baseDirectory = baseDirectory; // changed name to camelCase
     }
@@ -43,14 +43,14 @@ public class fileOutputStrategy implements OutputStrategy {
     public void output(int patientId, long timestamp, String label, String data) {
         try {
             // Create the directory
-            Files.createDirectories(Paths.get(BaseDirectory));
+            Files.createDirectories(Paths.get(baseDirectory));
         } catch (IOException e) {
             System.err.println("Error creating base directory: " + e.getMessage());
             return;
         }
         // changed variable name to UPPER_SNAKE_CASE since it is a constant
         //if file path is absent compute it, otherwise retrieve it
-        String FilePath = FILE_MAP.computeIfAbsent(label, k -> Paths.get(BaseDirectory, label + ".txt").toString());
+        String FilePath = FILE_MAP.computeIfAbsent(label, k -> Paths.get(baseDirectory, label + ".txt").toString());
 
         // Write the data to the file
         try (PrintWriter out = new PrintWriter(

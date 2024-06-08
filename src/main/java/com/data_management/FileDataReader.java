@@ -1,88 +1,62 @@
+package com.data_management;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import com.data_management.PatientRecord;
+public class FileDataReader implements DataReader {
 
+    private String dirPath;
 
-public class FileDataReader implements DataReader{
-    
-    /**This class implements DataReader
-      * reads data from files on a given directory 
-      * parse data and stores it in the data storage 
-      */
-
-	private String dirPath;
-	
-	public FileDataReader(String dirPath)
-	{
-		this.dirPath=dirPath;
-	}
-
-    public void readData(DataStorage dataStorage)
-    {
-	
-        File dir=new File(dirPath);
-        if(!dir.exists() || !dir.isDirectory())
-        {
-            throw new IllegalArgumentException("Invalid argument!"+outputDirectory);
-        }
-
-        File[] files = dir.listFiles((d,name)->name.endsWith(".txt")); // workking w/text files
-
-        if(files==null)
-        {
-            throw new IllegalArgumentException("No files in the directory!"+outputDirectory);
-        }
-
-        for(File file:files)
-        {
-            parseFile(file,dataStorage);
-            }
-        
-
+    public FileDataReader(String tempDirectory) {
+        this.dirPath = tempDirectory;
     }
 
+    public void readData(DataStorage dataStorage) {
+        File dir = new File(dirPath);
+        if (!dir.exists() || !dir.isDirectory()) {
+            throw new IllegalArgumentException("Specified path is not a directory: " + dirPath);
+        }
 
-    private void parseFile(File file, DataStorage dataStorage)
-    {
-        try(BufferedReader reader=new BufferedReader(new FileReader(file)))
-        {
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".txt")); // working with text files
+
+        if (files == null || files.length == 0) {
+            throw new IllegalArgumentException("No files in the directory: " + dirPath);
+        }
+
+        for (File file : files) {
+            parseFile(file, dataStorage);
+        }
+    }
+
+    public void parseFile(File file, DataStorage dataStorage) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
 
-            while((line=reader.readLine()!=null))
-            {
-                PatientRecord record=parseLineToPatientRecord(line);
-               if( record!=null)
-               {
-                dataStorage.addPatientData(record.getPatientId(),record.getMeasurementValue(),record.getRecordType(),record.getTimestamp());
-               }
+            while ((line = reader.readLine()) != null) {
+                PatientRecord record = parseLineToPatientRecord(line);
+                if (record != null) {
+                    dataStorage.addPatientData(record.getPatientId(), record.getMeasurementValue(),
+                            record.getRecordType(), record.getTimestamp());
+                }
             }
-        }catch(IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private PatientRecord parseLineToPatientRecord(String line) {
+        String[] parts = line.split(",");
 
-    private PatientRecord parseLineToPatientRecord(String line)
-    {
-        String [] parts=line.split(",");
-        String [] patientIDPart=parts[0].split(":");
-        String [] timeStampPart=parts[1].split(":");
-        String [] labelPart=parts[2].split(":");
-        String [] dataPart=parts[3].split(":");
+        try {
+            int patientId = Integer.parseInt(parts[0].trim());
+            double measurementValue = Double.parseDouble(parts[1].trim());
+            String recordType = parts[2].trim();
+            long timestamp = Long.parseLong(parts[3].trim());
 
-        try{
-        int patientID=Int.parse(patientIDPart[1]);
-        long timeStamp=Long.parseLong(timeStampPart[1]);
-        String recordType=labelPart[1];
-        double measurementValue=Double.parseDouble(dataPart[1]);
-
-        return new PatientRecord(patientID, measurementValue, recordType, timeStamp);
-        }catch(NumberFormatException e)
-        {
+            return new PatientRecord(patientId, measurementValue, recordType, timestamp);
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
             return null;
         }

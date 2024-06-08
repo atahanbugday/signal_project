@@ -1,7 +1,9 @@
 package com.data_management;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents a patient and manages their medical records.
@@ -22,6 +24,10 @@ public class Patient {
     public Patient(int patientId) {
         this.patientId = patientId;
         this.patientRecords = new ArrayList<>();
+    }
+
+    public int getPatientId() {
+        return patientId;
     }
 
     /**
@@ -53,12 +59,13 @@ public class Patient {
      */
     public List<PatientRecord> getRecords(long startTime, long endTime) {
         return patientRecords.stream()
-                             .filter(record -> {
-                                 long timestamp = record.getTimestamp();
-                                 return timestamp >= startTime && timestamp <= endTime;
-                             })
-                             .sorted(Comparator.comparingLong(PatientRecord::getTimestamp))
-                             .collect(Collectors.toList());
+                .filter(record -> {
+                    long timestamp = record.getTimestamp();
+                    return timestamp >= startTime && timestamp <= endTime;
+                })
+                .sorted(Comparator.comparingLong(PatientRecord::getTimestamp))
+                .collect(Collectors.toList());
+
     }
-    
+
 }
