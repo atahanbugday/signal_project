@@ -66,3 +66,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Project Members
 - Student ID: 6337536
+
+## UML_Models Link
+This project includes a set of UML class diagrams and documentation, which can be found in the following link:
+https://github.com/atahanbugday/signal_project/tree/master/uml_models
