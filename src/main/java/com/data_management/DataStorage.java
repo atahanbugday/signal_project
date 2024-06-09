@@ -1,10 +1,11 @@
 package com.data_management;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import com.alerts.AlertGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 /**
  * Manages storage and retrieval of patient data within a healthcare monitoring
@@ -18,9 +19,10 @@ public class DataStorage {
     /**
      * Constructs a new instance of DataStorage, initializing the underlying storage
      * structure.
+     * The storage uses a ConcurrentHashMap to ensure thread-safe operations.
      */
     public DataStorage() {
-        this.patientMap = new HashMap<>();
+        this.patientMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -37,12 +39,13 @@ public class DataStorage {
      *                         milliseconds since the Unix epoch
      */
     public void addPatientData(int patientId, double measurementValue, String recordType, long timestamp) {
-        Patient patient = patientMap.get(patientId);
-        if (patient == null) {
-            patient = new Patient(patientId);
-            patientMap.put(patientId, patient);
-        }
-        patient.addRecord(measurementValue, recordType, timestamp);
+        patientMap.compute(patientId, (id, patient) -> {
+            if (patient == null) {
+                patient = new Patient(id);
+            }
+            patient.addRecord(measurementValue, recordType, timestamp);
+            return patient;
+        });
     }
 
     /**
@@ -56,14 +59,14 @@ public class DataStorage {
      * @param endTime   the end of the time range, in milliseconds since the Unix
      *                  epoch
      * @return a list of PatientRecord objects that fall within the specified time
-     *         range
+     *         range. Returns an empty list if the patient does not exist.
      */
     public List<PatientRecord> getRecords(int patientId, long startTime, long endTime) {
         Patient patient = patientMap.get(patientId);
         if (patient != null) {
             return patient.getRecords(startTime, endTime);
         }
-        return new ArrayList<>(); // return an empty list if no patient is found
+        return new ArrayList<>(); // Return an empty list if no patient is found
     }
 
     /**
@@ -79,17 +82,12 @@ public class DataStorage {
      * The main method for the DataStorage class.
      * Initializes the system, reads data into storage, and continuously monitors
      * and evaluates patient data.
+     * This method is for demonstration purposes and may be customized as needed.
      * 
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        // DataReader is not defined in this scope, should be initialized appropriately.
-        // DataReader reader = new SomeDataReaderImplementation("path/to/data");
         DataStorage storage = new DataStorage();
-
-        // Assuming the reader has been properly initialized and can read data into the
-        // storage
-        // reader.readData(storage);
 
         // Example of using DataStorage to retrieve and print records for a patient
         List<PatientRecord> records = storage.getRecords(1, 1700000000000L, 1800000000000L);

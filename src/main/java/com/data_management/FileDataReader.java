@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class FileDataReader implements DataReader {
+public class FileDataReader implements DataReaderFile {
 
     private String dirPath;
 
